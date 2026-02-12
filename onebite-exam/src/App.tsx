@@ -1,7 +1,12 @@
-import './App.css';
+import "./App.css";
+import { Button } from "@/components/ui/button";
 
 function App() {
-  return <div>Hello World</div>;
+  return (
+    <div>
+      <Button>Click me</Button>
+    </div>
+  );
 }
 
 export default App;
