@@ -1,29 +1,3 @@
 {
-  "todos": [
-    {
-      "id": "1",
-      "content": "Todo 1",
-      "isDone": true
-    },
-    {
-      "id": "2",
-      "content": "Todo 2",
-      "isDone": true
-    },
-    {
-      "id": "3",
-      "content": "Todo 3",
-      "isDone": false
-    },
-    {
-      "id": "c323",
-      "content": "123",
-      "isDone": false
-    },
-    {
-      "id": "9418",
-      "content": "777",
-      "isDone": false
-    }
-  ]
+  "todos": []
 }
