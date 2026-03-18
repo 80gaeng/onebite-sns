@@ -16,7 +16,6 @@ export default function SignInPage() {
     useSignInWithPassword({
       onError: (error) => {
         const message = generateErrorMessage(error);
-
         toast.error(message, {
           position: "top-center",
         });
