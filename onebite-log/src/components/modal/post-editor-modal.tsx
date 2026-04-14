@@ -22,11 +22,11 @@ export default function PostEditorModal() {
   const session = useSession();
   const openAlertModal = useOpenAlertModal();
 
-  const { isOpen, close } = usePostEditorModal();
+  const postEditorModal = usePostEditorModal();
   const { mutate: createPost, isPending: isCreatingPostPending } =
     useCreatePost({
       onSuccess: () => {
-        close();
+        postEditorModal.actions.close();
       },
       onError: (error) => {
         toast.error("포스트 생성에 실패했습니다.", {
@@ -48,16 +48,22 @@ export default function PostEditorModal() {
   }, [content]);
 
   useEffect(() => {
-    if (!isOpen) {
+    if (!postEditorModal.isOpen) {
       images.forEach((image) => {
         URL.revokeObjectURL(image.previewUrl);
       });
       return;
     }
+
+    if (postEditorModal.type === "CREATE") {
+      setContent("");
+      setImages([]);
+    } else {
+      setContent(postEditorModal.content);
+      setImages([]);
+    }
     textareaRef.current?.focus();
-    setContent("");
-    setImages([]);
-  }, [isOpen]);
+  }, [postEditorModal.isOpen]);
 
   const handleCloseModal = () => {
     if (content !== "" || images.length !== 0) {
@@ -65,13 +71,13 @@ export default function PostEditorModal() {
         title: "게시글 작성이 마무리 되지 않았습니다.",
         description: "이 화면에서 나가면 작성중이던 내용이 사라집니다.",
         onPositive: () => {
-          close();
+          postEditorModal.actions.close();
         },
       });
 
       return;
     }
-    close();
+    postEditorModal.actions.close();
   };
 
   const handleCreatePostClick = () => {
@@ -107,7 +113,7 @@ export default function PostEditorModal() {
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={handleCloseModal}>
+    <Dialog open={postEditorModal.isOpen} onOpenChange={handleCloseModal}>
       <DialogContent className="max-h-[90vh]">
         <DialogTitle>포스트 작성</DialogTitle>
         <textarea
@@ -126,6 +132,22 @@ export default function PostEditorModal() {
           multiple
           className="hidden"
         />
+        {postEditorModal.isOpen && postEditorModal.type === "EDIT" && (
+          <Carousel>
+            <CarouselContent>
+              {postEditorModal.imageUrls?.map((url) => (
+                <CarouselItem className="basis-2/5" key={url}>
+                  <div className="relative">
+                    <img
+                      src={url}
+                      className="h-full w-full rounded-sm object-cover"
+                    />
+                  </div>
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+          </Carousel>
+        )}
         {images.length > 0 && (
           <Carousel>
             <CarouselContent>
@@ -148,15 +170,17 @@ export default function PostEditorModal() {
             </CarouselContent>
           </Carousel>
         )}
-        <Button
-          onClick={() => fileInputRef.current?.click()}
-          disabled={isCreatingPostPending}
-          variant="outline"
-          className="cursor-pointer"
-        >
-          <ImageIcon />
-          이미지 추가
-        </Button>
+        {postEditorModal.isOpen && postEditorModal.type === "CREATE" && (
+          <Button
+            onClick={() => fileInputRef.current?.click()}
+            disabled={isCreatingPostPending}
+            variant="outline"
+            className="cursor-pointer"
+          >
+            <ImageIcon />
+            이미지 추가
+          </Button>
+        )}
         <Button
           disabled={isCreatingPostPending}
           onClick={handleCreatePostClick}

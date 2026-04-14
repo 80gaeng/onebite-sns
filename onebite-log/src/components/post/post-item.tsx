@@ -7,6 +7,8 @@ import {
   CarouselContent,
   CarouselItem,
 } from "@/components/ui/carousel";
+import { formatTimeAgo } from "@/lib/time";
+import EditPostItemButton from "@/components/post/edit-post-item-button";
 
 export default function PostItem(post: Post) {
   return (
@@ -25,16 +27,14 @@ export default function PostItem(post: Post) {
               {post.author.nickname}
             </div>
             <div className="text-muted-foreground text-sm">
-              {new Date(post.created_at).toLocaleString()}
+              {formatTimeAgo(post.created_at)}
             </div>
           </div>
         </div>
 
         {/* 1-2. 수정/삭제 버튼 */}
         <div className="text-muted-foreground flex text-sm">
-          <Button className="cursor-pointer" variant={"ghost"}>
-            수정
-          </Button>
+          <EditPostItemButton {...post} />
           <Button className="cursor-pointer" variant={"ghost"}>
             삭제
           </Button>
