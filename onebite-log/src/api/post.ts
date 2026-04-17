@@ -26,11 +26,15 @@ export async function createPost(content: string) {
   return data;
 }
 
-export async function createPostWithImages(
-  content: string,
-  images: File[],
-  userId: string,
-) {
+export async function createPostWithImages({
+  content,
+  images,
+  userId,
+}: {
+  content: string;
+  images: File[];
+  userId: string;
+}) {
   // 1. 포스트 생성
   const post = await createPost(content);
 

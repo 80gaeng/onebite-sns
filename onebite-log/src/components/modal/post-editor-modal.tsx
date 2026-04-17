@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/carousel";
 import { useSession } from "@/store/session";
 import { useOpenAlertModal } from "@/store/alert-modal";
+import { useUpdatePost } from "@/hooks/mutations/post/use-update-post";
 
 type Image = {
   file: File;
@@ -30,6 +31,18 @@ export default function PostEditorModal() {
       },
       onError: (error) => {
         toast.error("포스트 생성에 실패했습니다.", {
+          position: "top-center",
+        });
+      },
+    });
+
+  const { mutate: updatePost, isPending: isUpdatingPostPending } =
+    useUpdatePost({
+      onSuccess: () => {
+        postEditorModal.actions.close();
+      },
+      onError: (error) => {
+        toast.error("포스트 수정에 실패했습니다.", {
           position: "top-center",
         });
       },
@@ -80,13 +93,23 @@ export default function PostEditorModal() {
     postEditorModal.actions.close();
   };
 
-  const handleCreatePostClick = () => {
+  const handleSavePostClick = () => {
     if (content.trim() === "") return;
-    createPost({
-      content,
-      images: images.map((image) => image.file),
-      userId: session!.user.id,
-    });
+    if (!postEditorModal.isOpen) return;
+
+    if (postEditorModal.type === "CREATE") {
+      createPost({
+        content,
+        images: images.map((image) => image.file),
+        userId: session!.user.id,
+      });
+    } else {
+      if (content === postEditorModal.content) return;
+      updatePost({
+        id: postEditorModal.postId,
+        content: content,
+      });
+    }
   };
 
   const handleSelectImages = (e: ChangeEvent<HTMLInputElement>) => {
@@ -112,12 +135,14 @@ export default function PostEditorModal() {
     URL.revokeObjectURL(image.previewUrl);
   };
 
+  const isPending = isCreatingPostPending || isUpdatingPostPending;
+
   return (
     <Dialog open={postEditorModal.isOpen} onOpenChange={handleCloseModal}>
       <DialogContent className="max-h-[90vh]">
         <DialogTitle>포스트 작성</DialogTitle>
         <textarea
-          disabled={isCreatingPostPending}
+          disabled={isPending}
           ref={textareaRef}
           value={content}
           onChange={(e) => setContent(e.target.value)}
@@ -173,7 +198,7 @@ export default function PostEditorModal() {
         {postEditorModal.isOpen && postEditorModal.type === "CREATE" && (
           <Button
             onClick={() => fileInputRef.current?.click()}
-            disabled={isCreatingPostPending}
+            disabled={isPending}
             variant="outline"
             className="cursor-pointer"
           >
@@ -182,8 +207,8 @@ export default function PostEditorModal() {
           </Button>
         )}
         <Button
-          disabled={isCreatingPostPending}
-          onClick={handleCreatePostClick}
+          disabled={isPending}
+          onClick={handleSavePostClick}
           className="cursor-pointer"
         >
           저장
