@@ -17,7 +17,7 @@ export function useInfinitePostsData() {
       posts.forEach((post) => {
         queryClient.setQueryData(QUERY_KEYS.post.byId(post.id), post);
       });
-      return posts;
+      return posts.map((post) => post.id);
     },
 
     initialPageParam: 0,
@@ -25,5 +25,7 @@ export function useInfinitePostsData() {
       if (lastPage.length < PAGE_SIZE) return undefined;
       return allPages.length;
     },
+
+    staleTime: Infinity,
   });
 }

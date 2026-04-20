@@ -11,12 +11,24 @@ import { formatTimeAgo } from "@/lib/time";
 import EditPostButton from "@/components/post/edit-post-button";
 import DeletePostButton from "@/components/post/delete-post-button";
 import { useSession } from "@/store/session";
+import { usePostByIdData } from "@/hooks/queries/use-post-by-id-data";
+import Fallback from "@/components/fallback";
+import Loader from "@/components/Loader";
 
-export default function PostItem(post: Post) {
+export default function PostItem({ postId }: { postId: number }) {
   const session = useSession();
   const userId = session?.user?.id;
 
-  const isMine = userId === post.author_id;
+  const {
+    data: post,
+    isPending,
+    error,
+  } = usePostByIdData({ postId, type: "FEED" });
+
+  if (isPending) return <Loader />;
+  if (error) return <Fallback />;
+
+  const isMine = userId === post?.author_id;
 
   return (
     <div className="flex flex-col gap-4 border-b pb-8">
