@@ -1,3 +1,16 @@
+import ProfileInfo from "@/components/profile/profile-info";
+import { useId } from "react";
+import { Navigate, useParams } from "react-router";
+
 export default function ProfileDetailPage() {
-  return <div>ProfileDetailPage</div>;
+  const params = useParams();
+  const userId = params.userId;
+
+  if (!userId) return <Navigate to="/" replace />;
+
+  return (
+    <div>
+      <ProfileInfo userId={userId} />
+    </div>
+  );
 }
