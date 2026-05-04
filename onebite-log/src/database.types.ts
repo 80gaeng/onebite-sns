@@ -22,7 +22,7 @@ export type Database = {
           id: number
           parent_comment_id: number | null
           post_id: number
-          root_comment: number | null
+          root_comment_id: number | null
         }
         Insert: {
           author_id?: string
@@ -31,7 +31,7 @@ export type Database = {
           id?: number
           parent_comment_id?: number | null
           post_id: number
-          root_comment?: number | null
+          root_comment_id?: number | null
         }
         Update: {
           author_id?: string
@@ -40,7 +40,7 @@ export type Database = {
           id?: number
           parent_comment_id?: number | null
           post_id?: number
-          root_comment?: number | null
+          root_comment_id?: number | null
         }
         Relationships: [
           {
@@ -66,7 +66,7 @@ export type Database = {
           },
           {
             foreignKeyName: "comment_root_comment_fkey"
-            columns: ["root_comment"]
+            columns: ["root_comment_id"]
             isOneToOne: false
             referencedRelation: "comment"
             referencedColumns: ["id"]
